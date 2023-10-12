@@ -1,5 +1,5 @@
 # members-only
-an exclusive clubhouse where your members can write anonymous posts
+an exclusive clubhouse where members can write anonymous posts
 
 Member passcode : DIYAR
 
