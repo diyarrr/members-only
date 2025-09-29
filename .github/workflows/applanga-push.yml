@@ -1,0 +1,77 @@
+name: Push Source Files to Applanga
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - app.js
+      - package.json
+  workflow_dispatch:
+    inputs:
+      push_targets:
+        type: boolean
+        description: Push translation files. If set translation files will be pushed instead of source files
+        default: false
+        required: false
+      mobileAppId:
+        description: Mobile App ID (MongoDB _id)
+        required: true
+        type: string
+      branchId:
+        description: Branch ID (optional)
+        required: false
+        type: string
+jobs:
+  push-sources-for-translation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify workflow started
+        run: |-
+          curl -X POST "${{ secrets.APPLANGA_BASE_BASE_URL }}/v2/projects/${{ github.event.inputs.mobileAppId }}/github/workflow/start" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
+            -d '{
+              "workflowType": "push",
+              "runId": "${{ github.run_id }}"
+            }' || echo "Failed to notify workflow start, continuing anyway"
+      - uses: actions/checkout@v3
+        with:
+          path: checkout
+      - uses: applanga/setup-applanga-cli@v1.0.3
+        with:
+          version: 1.0.*
+      - name: Push Sources to Applanga
+        if: '${{ inputs.push_targets != true }}'
+        env:
+          APPLANGA_ACCESS_TOKEN: ${{ secrets.APPLANGA_ACCESS_TOKEN }}
+          APPLANGA_API_HOST: ${{ secrets.APPLANGA_API_HOST }}
+        run: applanga push --force
+        working-directory: checkout
+      - name: Push Translation Files to Applanga
+        if: '${{ inputs.push_targets == true }}'
+        env:
+          APPLANGA_ACCESS_TOKEN: '${{ secrets.APPLANGA_ACCESS_TOKEN }}'
+        run: applanga pushtarget --force
+        working-directory: checkout
+      - name: Notify workflow success
+        if: success()
+        run: |-
+          curl -X POST "${{ secrets.APPLANGA_BASE_BASE_URL }}/v2/projects/${{ github.event.inputs.mobileAppId }}/github/workflow/complete" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
+            -d '{
+              "workflowType": "push",
+              "status": "success",
+              "runId": "${{ github.run_id }}"
+            }' || echo "Failed to notify workflow success"
+      - name: Notify workflow failure
+        if: failure()
+        run: |-
+          curl -X POST "${{ secrets.APPLANGA_BASE_BASE_URL }}/v2/projects/${{ github.event.inputs.mobileAppId }}/github/workflow/complete" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
+            -d '{
+              "workflowType": "push",
+              "status": "failed",
+              "runId": "${{ github.run_id }}"
+            }' || echo "Failed to notify workflow failure"
