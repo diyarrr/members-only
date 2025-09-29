@@ -26,6 +26,10 @@ on:
         description: Mobile App ID (MongoDB _id)
         required: true
         type: string
+      branchId:
+        description: Branch ID (optional)
+        required: false
+        type: string
 jobs:
   pull-translation-in:
     runs-on: ubuntu-latest
@@ -36,9 +40,10 @@ jobs:
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
-             "workflowType": "pull",
+              "branchId": "${{ github.event.inputs.branchId }}",
+              "workflowType": "pull",
               "runId": "${{ github.run_id }}",
-          }' || echo "Failed to notify workflow start, continuing anyway"
+           }' || echo "Failed to notify workflow start, continuing anyway"
       - uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
@@ -69,7 +74,8 @@ jobs:
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
-             "workflowType": "pull",
+              "branchId": "${{ github.event.inputs.branchId }}",
+              "workflowType": "pull",
               "status": "success",
               "runId": "${{ github.run_id }}"
             }' || echo "Failed to notify workflow success"
@@ -80,7 +86,8 @@ jobs:
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
-             "workflowType": "pull",
+              "branchId": "${{ github.event.inputs.branchId }}",
+              "workflowType": "pull",
               "status": "failed",
               "runId": "${{ github.run_id }}"
             }' || echo "Failed to notify workflow failure"
