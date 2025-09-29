@@ -17,10 +17,6 @@ on:
         description: Mobile App ID (MongoDB _id)
         required: true
         type: string
-      branchId:
-        description: Branch ID (optional)
-        required: false
-        type: string
 jobs:
   push-sources-for-translation:
     runs-on: ubuntu-latest
