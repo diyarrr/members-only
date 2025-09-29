@@ -42,7 +42,7 @@ jobs:
             -d '{
               "branchId": "${{ github.event.inputs.branchId }}",
               "workflowType": "pull",
-              "runId": "${{ github.run_id }}",
+              "runId": "${{ github.run_id }}"
            }' || echo "Failed to notify workflow start, continuing anyway"
       - uses: actions/checkout@v3
         with:
