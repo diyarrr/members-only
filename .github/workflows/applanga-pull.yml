@@ -36,7 +36,7 @@ jobs:
     steps:
       - name: Notify workflow started
         run: |-
-          curl -X POST "${{ secrets.APPLANGA_BASE_BASE_URL }}/v2/projects/${{ github.event.inputs.mobileAppId }}/github/workflow/start" \
+          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v2/projects/${{ github.event.inputs.mobileAppId }}/github/workflow/start" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
@@ -70,7 +70,7 @@ jobs:
       - name: Notify workflow success
         if: success()
         run: |-
-          curl -X POST "${{ secrets.APPLANGA_BASE_BASE_URL }}/v2/projects/${{ github.event.inputs.mobileAppId }}/github/workflow/complete" \
+          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v2/projects/${{ github.event.inputs.mobileAppId }}/github/workflow/complete" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
@@ -82,7 +82,7 @@ jobs:
       - name: Notify workflow failure
         if: failure()
         run: |-
-          curl -X POST "${{ secrets.APPLANGA_BASE_BASE_URL }}/v2/projects/${{ github.event.inputs.mobileAppId }}/github/workflow/complete" \
+          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v2/projects/${{ github.event.inputs.mobileAppId }}/github/workflow/complete" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
