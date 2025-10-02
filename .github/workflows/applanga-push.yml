@@ -12,10 +12,6 @@ on:
         description: Push translation files. If set translation files will be pushed instead of source files
         default: false
         required: false
-      mobileAppId:
-        description: Mobile App ID (MongoDB _id)
-        required: true
-        type: string
       branchId:
         description: Branch ID (optional)
         required: false
@@ -26,13 +22,12 @@ jobs:
     steps:
       - name: Notify workflow started
         run: |-
-          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v2/projects/${{ github.event.inputs.mobileAppId }}/github/workflow/start" \
+          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v2/projects/workflow-start" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
              "branchId": "${{ github.event.inputs.branchId }}",
             "workflowType": "push",
-              "runId": "${{ github.run_id }}"
             }' || echo "Failed to notify workflow start, continuing anyway"
       - uses: actions/checkout@v3
         with:
@@ -56,24 +51,22 @@ jobs:
       - name: Notify workflow success
         if: success()
         run: |-
-          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v2/projects/${{ github.event.inputs.mobileAppId }}/github/workflow/complete" \
+          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v2/projects/workflow-complete" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
             "branchId": "${{ github.event.inputs.branchId }}",
             "workflowType": "push",
               "status": "success",
-              "runId": "${{ github.run_id }}"
             }' || echo "Failed to notify workflow success"
       - name: Notify workflow failure
         if: failure()
         run: |-
-          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v2/projects/${{ github.event.inputs.mobileAppId }}/github/workflow/complete" \
+          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v2/projects/workflow-complete" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
             "branchId": "${{ github.event.inputs.branchId }}",
             "workflowType": "push",
               "status": "failed",
-              "runId": "${{ github.run_id }}"
-            }' || echo "Failed to notify workflow failure"
+             }' || echo "Failed to notify workflow failure"
