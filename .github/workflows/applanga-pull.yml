@@ -37,7 +37,7 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
               "branchId": "${{ github.event.inputs.branchId }}",
-              "workflowType": "pull",
+              "workflowType": "pull"
            }' || echo "Failed to notify workflow start, continuing anyway"
       - uses: actions/checkout@v3
         with:
@@ -71,7 +71,7 @@ jobs:
             -d '{
               "branchId": "${{ github.event.inputs.branchId }}",
               "workflowType": "pull",
-              "status": "success",
+              "status": "success"
             }' || echo "Failed to notify workflow success"
       - name: Notify workflow failure
         if: failure()
@@ -82,5 +82,5 @@ jobs:
             -d '{
               "branchId": "${{ github.event.inputs.branchId }}",
               "workflowType": "pull",
-              "status": "failed",
+              "status": "failed"
             }' || echo "Failed to notify workflow failure"
