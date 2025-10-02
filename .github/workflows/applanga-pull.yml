@@ -22,6 +22,10 @@ on:
         description: Source branch for the pull request
         required: false
         default: newTranslations
+      mobileAppId:
+        description: Mobile App ID (MongoDB _id)
+        required: true
+        type: string
       branchId:
         description: Branch ID (optional)
         required: false
@@ -32,7 +36,7 @@ jobs:
     steps:
       - name: Notify workflow started
         run: |-
-          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v2/projects/workflow-start" \
+          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v2/projects/${{ github.event.inputs.mobileAppId }}/workflow-start" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
@@ -65,7 +69,7 @@ jobs:
       - name: Notify workflow success
         if: success()
         run: |-
-          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v2/projects/workflow-complete" \
+          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v2/projects/${{ github.event.inputs.mobileAppId }}/workflow-complete" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
@@ -76,7 +80,7 @@ jobs:
       - name: Notify workflow failure
         if: failure()
         run: |-
-          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v2/projects/github/workflow-complete" \
+          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v2/projects/${{ github.event.inputs.mobileAppId }}/workflow-complete" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
