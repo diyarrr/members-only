@@ -8,12 +8,6 @@
           "file_format": "ember_i18n_json_module",
           "tag": "app:translations.js",
           "language": "en"
-        },
-        {
-          "path": "./package.json",
-          "file_format": "chrome_i18n_json",
-          "tag": "app:messages.json",
-          "language": "en"
         }
       ]
     },
@@ -23,14 +17,6 @@
           "path": "./<language>.js",
           "file_format": "ember_i18n_json_module",
           "tag": "app:translations.js",
-          "exclude_languages": [
-            "en"
-          ]
-        },
-        {
-          "path": "./<language>.json",
-          "file_format": "chrome_i18n_json",
-          "tag": "app:messages.json",
           "exclude_languages": [
             "en"
           ]
