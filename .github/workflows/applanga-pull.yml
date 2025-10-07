@@ -23,11 +23,11 @@ on:
         required: false
         default: newTranslations
       mobileAppId:
-        description: Mobile App ID (MongoDB _id)
+        description: Mobile App ID
         required: true
         type: string
       branchId:
-        description: Branch ID (optional)
+        description: Branch ID
         required: false
         type: string
 jobs:
@@ -36,7 +36,7 @@ jobs:
     steps:
       - name: Notify workflow started
         run: |-
-          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v2/projects/${{ github.event.inputs.mobileAppId }}/workflow-start" \
+          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v1/api/workflow-start?app=${{ github.event.inputs.mobileAppId }}" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
@@ -50,8 +50,6 @@ jobs:
       - uses: applanga/setup-applanga-cli@v1.0.3
         with:
           version: 1.0.*
-      - name: wait 15 seconds
-        run: sleep 15
       - name: Pull translations from Applanga
         env:
           APPLANGA_ACCESS_TOKEN: ${{ secrets.APPLANGA_ACCESS_TOKEN }}
@@ -71,7 +69,7 @@ jobs:
       - name: Notify workflow success
         if: success()
         run: |-
-          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v2/projects/${{ github.event.inputs.mobileAppId }}/workflow-complete" \
+          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v1/api/workflow-complete?app=${{ github.event.inputs.mobileAppId }}" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
@@ -80,9 +78,9 @@ jobs:
               "status": "success"
             }' || echo "Failed to notify workflow success"
       - name: Notify workflow failure
-        if: ${{ failure() }}
+        if: failure()
         run: |-
-          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v2/projects/${{ github.event.inputs.mobileAppId }}/workflow-complete" \
+          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v1/api/workflow-complete?app=${{ github.event.inputs.mobileAppId }}" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
