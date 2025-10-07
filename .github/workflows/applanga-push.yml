@@ -39,6 +39,8 @@ jobs:
       - uses: applanga/setup-applanga-cli@v1.0.3
         with:
           version: 1.0.*
+      - name: sleep 15
+        run: sleep 15
       - name: Push Sources to Applanga
         if: '${{ inputs.push_targets != true }}'
         env:
