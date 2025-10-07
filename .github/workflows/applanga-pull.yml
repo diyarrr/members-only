@@ -50,6 +50,8 @@ jobs:
       - uses: applanga/setup-applanga-cli@v1.0.3
         with:
           version: 1.0.*
+      - name: sleep 15 secs
+        run: sleep 15
       - name: Pull translations from Applanga
         env:
           APPLANGA_ACCESS_TOKEN: ${{ secrets.APPLANGA_ACCESS_TOKEN }}
