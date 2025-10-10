@@ -53,19 +53,19 @@ jobs:
           APPLANGA_ACCESS_TOKEN: '${{ secrets.APPLANGA_ACCESS_TOKEN }}'
         run: applanga pushtarget --force
         working-directory: checkout
-      - name: Notify workflow success
-        if: success()
-        run: |-
-          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v1/api/workflow-complete?app=${{ steps.extract-app-id.outputs.MOBILE_APP_ID }}" \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
-            -d '{
-            "branchId": "${{ github.event.inputs.branch_id }}",
-            "workflowType": "push",
-              "status": "success"
-            }' || echo "Failed to notify workflow success"
+      # - name: Notify workflow success
+      #   if: success()
+      #   run: |-
+      #     curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v1/api/workflow-complete?app=${{ steps.extract-app-id.outputs.MOBILE_APP_ID }}" \
+      #       -H "Content-Type: application/json" \
+      #       -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
+      #       -d '{
+      #       "branchId": "${{ github.event.inputs.branch_id }}",
+      #       "workflowType": "push",
+      #         "status": "success"
+      #       }' || echo "Failed to notify workflow success"
       - name: Notify workflow failure
-        if: failure()
+        # if: failure()
         run: |-
           curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v1/api/workflow-complete?app=${{ steps.extract-app-id.outputs.MOBILE_APP_ID }}" \
             -H "Content-Type: application/json" \
