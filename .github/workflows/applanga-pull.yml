@@ -37,7 +37,6 @@ jobs:
           BRANCH_ID_INPUT: '${{ github.event.inputs.branch_id }}'
           APPLANGA_API_HOST: ${{ secrets.APPLANGA_API_HOST }}
         run: |-
-
           # Set API host from secret or use fallback, then remove any trailing slash
           RAW_HOST="${APPLANGA_API_HOST:-https://api.applanga.com}"
           CLEANED_HOST="${RAW_HOST%/}"
