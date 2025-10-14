@@ -30,14 +30,16 @@ jobs:
   pull-translation-in:
     runs-on: ubuntu-latest
     steps:
-      - name: Extract Mobile App ID and branch id
-        id: extract
-        run: |-
-          echo "MOBILE_APP_ID=$(echo "${{ secrets.APPLANGA_ACCESS_TOKEN }}" | cut -d'!' -f1)" >> $GITHUB_OUTPUT
-          if [ -n "${{ github.event.inputs.branch_id }}" ]; then echo "BRANCH_ID=&branch=${{ github.event.inputs.branch_id }}" >> $GITHUB_OUTPUT; else echo "BRANCH_ID=" >> $GITHUB_OUTPUT; fi
+      - name: Prepare Applanga API Configuration
+        id: api_config
+        env:
+          ACCESS_TOKEN: ${{ secrets.APPLANGA_ACCESS_TOKEN }}
+          BRANCH_ID_INPUT: '${{ github.event.inputs.branch_id }}'
+          APPLANGA_API_HOST: ${{ secrets.APPLANGA_API_HOST }}
+        run: "\n\t\t\t\t\t\t\t\t\t# Set API host from secret or use fallback, then remove any trailing slash\n\t\t\t\t\t\t\t\t\tRAW_HOST=\"${APPLANGA_API_HOST_SECRET:-'https://api.applanga.com'}\"\n\t\t\t\t\t\t\t\t\tCLEANED_HOST=\"${RAW_HOST%/}\"\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t# Extract mobile app ID from access token\n\t\t\t\t\t\t\t\t\tMOBILE_APP_ID=$(echo \"$ACCESS_TOKEN\" | cut -d'!' -f1)\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t# Prepare branch ID parameter string if an ID is provided\n\t\t\t\t\t\t\t\t\tBRANCH_PARAM=\"\"\n\t\t\t\t\t\t\t\t\tif [ -n \"$BRANCH_ID_INPUT\" ]; then\n\t\t\t\t\t\t\t\t\t\tBRANCH_PARAM=\"&branch=$BRANCH_ID_INPUT\"\n\t\t\t\t\t\t\t\t\tfi\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t# Set all values as outputs for upcoming steps\n\t\t\t\t\t\t\t\t\techo \"mobile_app_id=${MOBILE_APP_ID}\" >> $GITHUB_OUTPUT\n\t\t\t\t\t\t\t\t\techo \"branch_param=${BRANCH_PARAM}\" >> $GITHUB_OUTPUT\n\t\t\t\t\t\t\t\t\techo \"api_host=${CLEANED_HOST}\" >> $GITHUB_OUTPUT\n\t\t\t\t\t\t\t\t"
       - name: Notify workflow started
         run: |-
-          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v1/api/workflow-start?app=${{ steps.extract.outputs.MOBILE_APP_ID }}${{ steps.extract.outputs.BRANCH_ID }}" \
+          curl -X POST "${{ steps.api_config.outputs.api_host }}/v1/api/workflow-start?app=${{ steps.api_config.outputs.mobile_app_id }}${{ steps.api_config.outputs.branch_param }}" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
@@ -52,8 +54,8 @@ jobs:
           version: 1.0.*
       - name: Pull translations from Applanga
         env:
-          APPLANGA_ACCESS_TOKEN: ${{ secrets.APPLANGA_ACCESS_TOKEN }}
-          APPLANGA_API_HOST: ${{ secrets.APPLANGA_API_HOST }}
+          APPLANGA_ACCESS_TOKEN: '${{ secrets.APPLANGA_ACCESS_TOKEN }}'
+          APPLANGA_API_HOST: '${{ secrets.APPLANGA_API_HOST }}'
         run: 'applanga pull ${{ github.event.inputs.tags }}'
         working-directory: checkout
       - name: Create Pull Request
@@ -69,7 +71,7 @@ jobs:
       - name: Notify workflow success
         if: success()
         run: |-
-          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v1/api/workflow-complete?app=${{ steps.extract.outputs.MOBILE_APP_ID }}${{ steps.extract.outputs.BRANCH_ID }}" \
+          curl -X POST "${{ steps.api_config.outputs.api_host }}/v1/api/workflow-start?app=${{ steps.api_config.outputs.mobile_app_id }}${{ steps.api_config.outputs.branch_param }}" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
@@ -79,7 +81,7 @@ jobs:
       - name: Notify workflow failure
         if: failure()
         run: |-
-          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v1/api/workflow-complete?app=${{ steps.extract.outputs.MOBILE_APP_ID }}${{ steps.extract.outputs.BRANCH_ID }}" \
+          curl -X POST "${{ steps.api_config.outputs.api_host }}/v1/api/workflow-start?app=${{ steps.api_config.outputs.mobile_app_id }}${{ steps.api_config.outputs.branch_param }}" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
