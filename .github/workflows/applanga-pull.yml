@@ -36,7 +36,7 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.APPLANGA_ACCESS_TOKEN }}
           BRANCH_ID_INPUT: '${{ github.event.inputs.branch_id }}'
           APPLANGA_API_HOST: ${{ secrets.APPLANGA_API_HOST }}
-        run: "\n\t\t\t\t\t\t\t\t\t# Set API host from secret or use fallback, then remove any trailing slash\n\t\t\t\t\t\t\t\t\tRAW_HOST=\"${APPLANGA_API_HOST_SECRET:-'https://api.applanga.com'}\"\n\t\t\t\t\t\t\t\t\tCLEANED_HOST=\"${RAW_HOST%/}\"\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t# Extract mobile app ID from access token\n\t\t\t\t\t\t\t\t\tMOBILE_APP_ID=$(echo \"$ACCESS_TOKEN\" | cut -d'!' -f1)\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t# Prepare branch ID parameter string if an ID is provided\n\t\t\t\t\t\t\t\t\tBRANCH_PARAM=\"\"\n\t\t\t\t\t\t\t\t\tif [ -n \"$BRANCH_ID_INPUT\" ]; then\n\t\t\t\t\t\t\t\t\t\tBRANCH_PARAM=\"&branch=$BRANCH_ID_INPUT\"\n\t\t\t\t\t\t\t\t\tfi\n\t\t\t\t\t\t\t\t\t\n\t\t\t\t\t\t\t\t\t# Set all values as outputs for upcoming steps\n\t\t\t\t\t\t\t\t\techo \"mobile_app_id=${MOBILE_APP_ID}\" >> $GITHUB_OUTPUT\n\t\t\t\t\t\t\t\t\techo \"branch_param=${BRANCH_PARAM}\" >> $GITHUB_OUTPUT\n\t\t\t\t\t\t\t\t\techo \"api_host=${CLEANED_HOST}\" >> $GITHUB_OUTPUT\n\t\t\t\t\t\t\t\t"
+        run: "# Set API host from secret or use fallback, then remove any trailing slash\nRAW_HOST=\"\\${APPLANGA_API_HOST_SECRET:-'https://api.applanga.com'}\"\nCLEANED_HOST=\"\\${RAW_HOST%/}\"\n# Extract mobile app ID from access token\nMOBILE_APP_ID=$(echo \"$ACCESS_TOKEN\" | cut -d'!' -f1)\n# Prepare branch ID parameter string if an ID is provided\nBRANCH_PARAM=\"\"\nif [ -n \"$BRANCH_ID_INPUT\" ]; then\n\tBRANCH_PARAM=\"&branch=$BRANCH_ID_INPUT\"\nfi\n# Set all values as outputs for upcoming steps\necho \"mobile_app_id=\\${MOBILE_APP_ID}\" >> $GITHUB_OUTPUT\necho \"branch_param=\\${BRANCH_PARAM}\" >> $GITHUB_OUTPUT\necho \"api_host=\\${CLEANED_HOST}\" >> $GITHUB_OUTPUT"
       - name: Notify workflow started
         run: |-
           curl -X POST "${{ steps.api_config.outputs.api_host }}/v1/api/workflow-start?app=${{ steps.api_config.outputs.mobile_app_id }}${{ steps.api_config.outputs.branch_param }}" \
@@ -55,7 +55,7 @@ jobs:
       - name: Pull translations from Applanga
         env:
           APPLANGA_ACCESS_TOKEN: '${{ secrets.APPLANGA_ACCESS_TOKEN }}'
-          APPLANGA_API_HOST: '${{ secrets.APPLANGA_API_HOST }}'
+          APPLANGA_API_HOST: '${{ steps.api_config.outputs.api_host }}'
         run: 'applanga pull ${{ github.event.inputs.tags }}'
         working-directory: checkout
       - name: Create Pull Request
