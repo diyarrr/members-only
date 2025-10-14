@@ -74,7 +74,7 @@ jobs:
       - name: Notify workflow success
         if: success()
         run: |-
-          curl -X POST "${{ steps.api_config.outputs.api_host }}/v1/api/workflow-start?app=${{ steps.api_config.outputs.mobile_app_id }}${{ steps.api_config.outputs.branch_param }}" \
+          curl -X POST "${{ steps.api_config.outputs.api_host }}/v1/api/workflow-complete?app=${{ steps.api_config.outputs.mobile_app_id }}${{ steps.api_config.outputs.branch_param }}" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
@@ -84,7 +84,7 @@ jobs:
       - name: Notify workflow failure
         if: failure()
         run: |-
-          curl -X POST "${{ steps.api_config.outputs.api_host }}/v1/api/workflow-start?app=${{ steps.api_config.outputs.mobile_app_id }}${{ steps.api_config.outputs.branch_param }}" \
+          curl -X POST "${{ steps.api_config.outputs.api_host }}/v1/api/workflow-complete?app=${{ steps.api_config.outputs.mobile_app_id }}${{ steps.api_config.outputs.branch_param }}" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
