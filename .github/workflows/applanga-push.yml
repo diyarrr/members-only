@@ -20,16 +20,17 @@ jobs:
   push-sources-for-translation:
     runs-on: ubuntu-latest
     steps:
-      - name: Extract Mobile App ID from Access Token
-        id: extract-app-id
-        run: 'echo "MOBILE_APP_ID=$(echo "${{ secrets.APPLANGA_ACCESS_TOKEN }}" | cut -d''!'' -f1)" >> $GITHUB_OUTPUT'
+      - name: Extract Mobile App ID and branch id
+        id: extract
+        run: |-
+          echo "MOBILE_APP_ID=$(echo "${{ secrets.APPLANGA_ACCESS_TOKEN }}" | cut -d'!' -f1)" >> $GITHUB_OUTPUT
+          if [ -n "${{ github.event.inputs.branch_id }}" ]; then echo "BRANCH_ID=&branch=${{ github.event.inputs.branch_id }}" >> $GITHUB_OUTPUT; else echo "BRANCH_ID=" >> $GITHUB_OUTPUT; fi
       - name: Notify workflow started
         run: |-
-          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v1/api/workflow-start?app=${{ steps.extract-app-id.outputs.MOBILE_APP_ID }}" \
+          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v1/api/workflow-start?app=${{ steps.extract.outputs.MOBILE_APP_ID }}${{ steps.extract.outputs.BRANCH_ID }}" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
-             "branchId": "${{ github.event.inputs.branch_id }}",
             "workflowType": "push"
             }' || echo "Failed to notify workflow start, continuing anyway"
       - uses: actions/checkout@v3
@@ -54,22 +55,20 @@ jobs:
       - name: Notify workflow success
         if: success()
         run: |-
-          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v1/api/workflow-complete?app=${{ steps.extract-app-id.outputs.MOBILE_APP_ID }}" \
+          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v1/api/workflow-complete?app=${{ steps.extract.outputs.MOBILE_APP_ID }}${{ steps.extract.outputs.BRANCH_ID }}" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
-            "branchId": "${{ github.event.inputs.branch_id }}",
             "workflowType": "push",
               "status": "success"
             }' || echo "Failed to notify workflow success"
       - name: Notify workflow failure
         if: failure()
         run: |-
-          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v1/api/workflow-complete?app=${{ steps.extract-app-id.outputs.MOBILE_APP_ID }}" \
+          curl -X POST "${{ secrets.APPLANGA_API_HOST }}/v1/api/workflow-complete?app=${{ steps.extract.outputs.MOBILE_APP_ID }}${{ steps.extract.outputs.BRANCH_ID }}" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
             -d '{
-            "branchId": "${{ github.event.inputs.branch_id }}",
             "workflowType": "push",
               "status": "failed"
             }' || echo "Failed to notify workflow failure"
