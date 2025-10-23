@@ -8,18 +8,6 @@
           "file_format": "chrome_i18n_json",
           "tag": "app:messages.json",
           "language": "en"
-        },
-        {
-          "path": "./package.json",
-          "file_format": "chrome_i18n_json",
-          "tag": "",
-          "language": "en"
-        },
-        {
-          "path": "./package.json",
-          "file_format": "chrome_i18n_json",
-          "tag": "app:messages.json",
-          "language": "en"
         }
       ]
     },
