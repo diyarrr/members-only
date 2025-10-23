@@ -85,18 +85,18 @@ jobs:
           title: ${{ github.event.inputs.pr_title }}
           body: Pulled in new translations from Applanga portal
           path: checkout
-      # - name: Notify workflow success
-      #   if: success()
-      #   run: |-
-      #     curl -X POST "${{ steps.api_config.outputs.api_host }}/v1/api/workflow-complete?app=${{ steps.api_config.outputs.mobile_app_id }}${{ steps.api_config.outputs.branch_param }}" \
-      #       -H "Content-Type: application/json" \
-      #       -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
-      #       -d '{
-      #         "workflowType": "pull",
-      #         "status": "success"
-      #       }' || echo "Failed to notify workflow success"
+      - name: Notify workflow success
+        if: success()
+        run: |-
+          curl -X POST "${{ steps.api_config.outputs.api_host }}/v1/api/workflow-complete?app=${{ steps.api_config.outputs.mobile_app_id }}${{ steps.api_config.outputs.branch_param }}" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.APPLANGA_ACCESS_TOKEN }}" \
+            -d '{
+              "workflowType": "pull",
+              "status": "success"
+            }' || echo "Failed to notify workflow success"
       - name: Notify workflow failure
-        # if: failure()
+        if: failure()
         run: |-
           curl -X POST "${{ steps.api_config.outputs.api_host }}/v1/api/workflow-complete?app=${{ steps.api_config.outputs.mobile_app_id }}${{ steps.api_config.outputs.branch_param }}" \
             -H "Content-Type: application/json" \
