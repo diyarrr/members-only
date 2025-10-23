@@ -22,8 +22,8 @@ on:
         description: Source branch for the pull request
         required: false
         default: newTranslations
-      branch_id:
-        description: Branch ID
+      applanga_branch_id:
+        description: Applanga Project Branch ID
         required: false
         type: string
 jobs:
@@ -34,7 +34,7 @@ jobs:
         id: api_config
         env:
           ACCESS_TOKEN: ${{ secrets.APPLANGA_ACCESS_TOKEN }}
-          BRANCH_ID_INPUT: '${{ github.event.inputs.branch_id }}'
+          BRANCH_ID_INPUT: '${{ github.event.inputs.applanga_branch_id }}'
           APPLANGA_API_HOST: ${{ secrets.APPLANGA_API_HOST }}
         run: |-
           # Set API host from secret or use fallback, then remove any trailing slash
