@@ -4,8 +4,16 @@ on:
     branches:
       - main
     paths:
+      - app.js
+      - middleware/auth.js
+      - routes/createAdmin.js
+      - routes/createMessage.js
+      - routes/deleteMessages.js
+      - routes/index.js
+      - models/message.js
       - package-lock.json
       - package.json
+      - models/user.js
   workflow_dispatch:
     inputs:
       push_targets:
