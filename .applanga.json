@@ -4,9 +4,15 @@
     "push": {
       "source": [
         {
-          "path": "./package.json",
+          "path": "./package-lock.json",
           "file_format": "chrome_i18n_json",
           "tag": "app:messages.json",
+          "language": "en"
+        },
+        {
+          "path": "./package.json",
+          "file_format": "chrome_i18n_json",
+          "tag": "app:messages:2030.json",
           "language": "en"
         }
       ]
@@ -17,6 +23,14 @@
           "path": "./<language>.json",
           "file_format": "chrome_i18n_json",
           "tag": "app:messages.json",
+          "exclude_languages": [
+            "en"
+          ]
+        },
+        {
+          "path": "./<language>.json",
+          "file_format": "chrome_i18n_json",
+          "tag": "app:messages:2030.json",
           "exclude_languages": [
             "en"
           ]
