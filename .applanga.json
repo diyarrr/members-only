@@ -4,6 +4,48 @@
     "push": {
       "source": [
         {
+          "path": "./app.js",
+          "file_format": "ember_i18n_json_module",
+          "tag": "app:translations.js",
+          "language": "en"
+        },
+        {
+          "path": "./middleware/auth.js",
+          "file_format": "ember_i18n_json_module",
+          "tag": "app:translations:9491.js",
+          "language": "en"
+        },
+        {
+          "path": "./routes/createAdmin.js",
+          "file_format": "ember_i18n_json_module",
+          "tag": "app:translations:9448.js",
+          "language": "en"
+        },
+        {
+          "path": "./routes/createMessage.js",
+          "file_format": "ember_i18n_json_module",
+          "tag": "app:translations:8505.js",
+          "language": "en"
+        },
+        {
+          "path": "./routes/deleteMessages.js",
+          "file_format": "ember_i18n_json_module",
+          "tag": "app:translations:6064.js",
+          "language": "en"
+        },
+        {
+          "path": "./routes/index.js",
+          "file_format": "ember_i18n_json_module",
+          "tag": "app:translations:8627.js",
+          "language": "en"
+        },
+        {
+          "path": "./models/message.js",
+          "file_format": "ember_i18n_json_module",
+          "tag": "app:translations:8249.js",
+          "language": "en"
+        },
+        {
           "path": "./package-lock.json",
           "file_format": "chrome_i18n_json",
           "tag": "app:messages.json",
@@ -12,13 +54,75 @@
         {
           "path": "./package.json",
           "file_format": "chrome_i18n_json",
-          "tag": "app:messages:2030.json",
+          "tag": "app:messages:3143.json",
+          "language": "en"
+        },
+        {
+          "path": "./models/user.js",
+          "file_format": "ember_i18n_json_module",
+          "tag": "app:translations:5337.js",
           "language": "en"
         }
       ]
     },
     "pull": {
       "target": [
+        {
+          "path": "./<language>.js",
+          "file_format": "ember_i18n_json_module",
+          "tag": "app:translations.js",
+          "exclude_languages": [
+            "en"
+          ]
+        },
+        {
+          "path": "./middleware/<language>.js",
+          "file_format": "ember_i18n_json_module",
+          "tag": "app:translations:9491.js",
+          "exclude_languages": [
+            "en"
+          ]
+        },
+        {
+          "path": "./routes/<language>.js",
+          "file_format": "ember_i18n_json_module",
+          "tag": "app:translations:9448.js",
+          "exclude_languages": [
+            "en"
+          ]
+        },
+        {
+          "path": "./routes/<language>.js",
+          "file_format": "ember_i18n_json_module",
+          "tag": "app:translations:8505.js",
+          "exclude_languages": [
+            "en"
+          ]
+        },
+        {
+          "path": "./routes/<language>.js",
+          "file_format": "ember_i18n_json_module",
+          "tag": "app:translations:6064.js",
+          "exclude_languages": [
+            "en"
+          ]
+        },
+        {
+          "path": "./routes/<language>.js",
+          "file_format": "ember_i18n_json_module",
+          "tag": "app:translations:8627.js",
+          "exclude_languages": [
+            "en"
+          ]
+        },
+        {
+          "path": "./models/<language>.js",
+          "file_format": "ember_i18n_json_module",
+          "tag": "app:translations:8249.js",
+          "exclude_languages": [
+            "en"
+          ]
+        },
         {
           "path": "./<language>.json",
           "file_format": "chrome_i18n_json",
@@ -30,7 +134,15 @@
         {
           "path": "./<language>.json",
           "file_format": "chrome_i18n_json",
-          "tag": "app:messages:2030.json",
+          "tag": "app:messages:3143.json",
+          "exclude_languages": [
+            "en"
+          ]
+        },
+        {
+          "path": "./models/<language>.js",
+          "file_format": "ember_i18n_json_module",
+          "tag": "app:translations:5337.js",
           "exclude_languages": [
             "en"
           ]
